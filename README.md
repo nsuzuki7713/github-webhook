@@ -2,7 +2,7 @@
 
 ## ライブラリ手順
 Lambdaのため、プロジェクトにライブラリを入れる。
+※ライブラリはフォルダ直下に置く必要がある
 ```
-$ mkdir modules
 $ pip3 install requests requests_oauthlib -t .
 ```
