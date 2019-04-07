@@ -9,7 +9,7 @@ import settings
 def lambda_handler(event, context):
     # HMAC値による簡易認証処理
     signature = event['headers']['X-Hub-Signature']
-    signedBody = "sha1=" + hmac.new(bytes(settings.SECRET, 'ascii'), bytes(event['body'], 'ascii'), hashlib.sha1).hexdigest()
+    signedBody = "sha1=" + hmac.new(bytes(settings.SECRET, 'utf-8'), bytes(event['body'], 'utf-8'), hashlib.sha1).hexdigest()
     if(signature != signedBody):
         return {"statusCode": 401, "body": "Unauthorized" }
 
