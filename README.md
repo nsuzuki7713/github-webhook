@@ -12,3 +12,6 @@ Lambdaのため、プロジェクトにライブラリを入れる。
 ```
 $ pip3 install requests requests_oauthlib -t .
 ```
+## Qiitaに書きました
+作成方法等を記載しました。
+[GitHubのWebhookでプルリクエストをマージした際にツイートできるようしてみた](https://qiita.com/turmericN/items/f6267a75be45c51eaed7)
