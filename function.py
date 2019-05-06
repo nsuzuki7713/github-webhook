@@ -51,7 +51,7 @@ def lambda_handler(event, context):
           + user_list[user] + "さんのプルリクをマージしました😊" + "\n"\
           + "【" + title + "】となります😎️" + "\n" +html_url
     else:
-        msg = "【" + title + "】となります!!" + "\n" + message + " by " + user_list[merged_by] + "\n" + html_url
+        msg = "【" + title + "】の対応です!!" + "\n" + message + " by " + user_list[merged_by] + "\n" + html_url
 
     # tweet処理
     twitter = OAuth1Session(settings.CONSUMER_KEY, settings.CONSUMER_SECRET, settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
