@@ -1,5 +1,5 @@
 #coding: UTF-8
-import json,hashlib,hmac
+import json,hashlib,hmac,requests
 from requests_oauthlib import OAuth1Session
 from datetime import datetime
 import settings
@@ -27,6 +27,8 @@ def lambda_handler(event, context):
     html_url = body['pull_request']['html_url'] # プルリクのURL
     user = body['pull_request']['user']['login'] # プルリク作成者
     merged_by = body['pull_request']['merged_by']['login'] # マージ者
+    merge_commit_sha = body['pull_request']['merge_commit_sha'] # マージハッシュ
+    repo_name = body['pull_request']['head']['repo']['full_name'] # レポジトリ名(nsuzuki7713/a6s-cloud-backend, nsuzuki7713/a6s-cloud-front, nsuzuki7713/a6s-cloud-batch)
     
     # GitHubのアカウントとツイートする際の名前の対応表
     user_list = {
@@ -35,11 +37,21 @@ def lambda_handler(event, context):
         "tokidrill": "Toki",
         "minokich": "みのきち",
     }
+
+    # コミットハッシュからコミットメッセージを表示
+    url = "https://api.github.com/repos/" + repo_name + "/git/commits/" + merge_commit_sha
+    res = requests.get(url)
+    lists = json.loads(res.text)
+    message = lists['message'].split("\n\n", 1)[1]
     
     # tweet文章作成
-    msg = user_list[merged_by] + "さんが"\
-        + user_list[user] + "さんのプルリクをマージしました😊" + "\n"\
-        + "【" + title + "】となります😎️" + "\n" +html_url
+    if title == message:
+        # コミットメッセージとtitleが同じ場合は今までの文言を反映
+        msg = user_list[merged_by] + "さんが"\
+          + user_list[user] + "さんのプルリクをマージしました😊" + "\n"\
+          + "【" + title + "】となります😎️" + "\n" +html_url
+    else:
+        msg = "【" + title + "】の対応です!!" + "\n" + message + " by " + user_list[merged_by] + "\n" + html_url
 
     # tweet処理
     twitter = OAuth1Session(settings.CONSUMER_KEY, settings.CONSUMER_SECRET, settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
@@ -47,4 +59,3 @@ def lambda_handler(event, context):
     req = twitter.post("https://api.twitter.com/1.1/statuses/update.json",params = params)
     
     return {"statusCode": 200, "body": msg}
-
